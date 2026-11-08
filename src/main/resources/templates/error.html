@@ -1,0 +1,15 @@
+<!doctype html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"><head>
+    <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Request could not be completed — Bagorithm</title>
+    <link rel="stylesheet" th:href="@{/webjars/bootstrap/5.3.3/css/bootstrap.min.css}"><link rel="stylesheet" th:href="@{/css/app.css}">
+</head><body class="photo-page inner-page">
+<main class="container narrow page-wrap">
+    <section class="form-card">
+        <p class="eyebrow">A TRAVEL DETOUR</p><h1>We couldn't complete that request.</h1>
+        <p th:if="${status}" class="muted" th:text="${'Error ' + status}">Error</p>
+        <p th:if="${message}" class="error" th:text="${message}">Please check your input or try again.</p>
+        <a class="btn btn-primary" th:href="@{/dashboard}">Back to dashboard</a>
+        <a class="btn btn-outline-primary" th:href="@{/welcome}">Welcome page</a>
+    </section>
+</main></body></html>

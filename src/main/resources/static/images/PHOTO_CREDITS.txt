@@ -1,0 +1,32 @@
+Travel background photographs bundled with Bagorithm
+
+mountain-panorama.jpg
+Title: Blue Mountains National Park (AU), Three Sisters -- 2019 -- 1987-9.jpg
+Author: Dietmar Rabich
+Source: https://commons.wikimedia.org/wiki/File:Blue_Mountains_National_Park_(AU),_Three_Sisters_--_2019_--_1987-9.jpg
+License: Creative Commons Attribution-ShareAlike 4.0 International
+License URL: https://creativecommons.org/licenses/by-sa/4.0/
+
+coastal-beach.jpg
+Title: BAN - Tropical beach landscape at Praia Banana, Principe, Sao Tome and Principe, 2021.jpg
+Author: Josep M. Gracia
+Source: https://commons.wikimedia.org/wiki/File:BAN_-_Tropical_beach_landscape_at_Praia_Banana,_Principe,_Sao_Tome_and_Principe,_2021.jpg
+License: Creative Commons Attribution-ShareAlike 4.0 International
+License URL: https://creativecommons.org/licenses/by-sa/4.0/
+
+mountain-road.jpg
+Title: 150906-001 Wilpena Pound from Moralana Scenic Drive Pano 50pc.jpg
+Author: Faj2323
+Source: https://commons.wikimedia.org/wiki/File:150906-001_Wilpena_Pound_from_Moralana_Scenic_Drive_Pano_50pc.jpg
+License: Creative Commons Attribution-ShareAlike 4.0 International
+License URL: https://creativecommons.org/licenses/by-sa/4.0/
+
+travel-aircraft.jpg
+Title: OK-TVD Boeing 737 Travel Service in Prague Airport C-s (7723847608).jpg
+Author: Aeroprints.com
+Source: https://commons.wikimedia.org/wiki/File:OK-TVD_Boeing_737_Travel_Service_in_Prague_Airport_C-s_(7723847608).jpg
+License: Creative Commons Attribution-ShareAlike 3.0 Unported
+License URL: https://creativecommons.org/licenses/by-sa/3.0/
+
+Images have been scaled/cropped for use as Swing panel backgrounds. The original source
+photographs are unchanged.

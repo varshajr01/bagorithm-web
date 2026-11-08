@@ -1,0 +1,34 @@
+<!doctype html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Dashboard — Bagorithm</title>
+    <link rel="stylesheet" th:href="@{/webjars/bootstrap/5.3.3/css/bootstrap.min.css}"><link rel="stylesheet" th:href="@{/css/app.css}">
+</head>
+<body class="photo-page inner-page">
+<div th:replace="~{fragments :: nav}"></div>
+<main class="container page-wrap">
+    <p class="eyebrow">YOUR TRAVEL DASHBOARD</p><h1>Welcome, <span th:text="${fullName}">Traveler</span>.</h1>
+    <p class="muted">Your plans, packing lists, and travel tools in one place.</p>
+    <div class="feature-grid">
+        <a class="feature-card primary-card" th:href="@{/trips/new}"><span class="card-icon">✈</span><h2>Plan a new trip</h2><p>Create a trip and get a personalized packing list.</p></a>
+        <a class="feature-card" th:href="@{/previous}"><span class="card-icon">▣</span><h2>Previous trips</h2><p>Open your saved trips and travel journals.</p></a>
+        <a class="feature-card" th:href="@{/tools/countdown}"><span class="card-icon">◷</span><h2>Trip countdown</h2><p>See how soon your next departure is.</p></a>
+        <a class="feature-card" th:href="@{/souvenirs}"><span class="card-icon">☷</span><h2>Travel tools</h2><p>Manage itineraries, shopping, souvenirs, and checklists.</p></a>
+    </div>
+    <section class="section-block"><div class="section-heading"><h2>Your trips</h2><a th:href="@{/trips/new}">Add trip</a></div>
+        <p th:if="${#lists.isEmpty(trips)}" class="empty-state">No trips yet. Start planning your first journey.</p>
+        <div class="trip-grid"><article class="trip-card" th:each="trip : ${trips}">
+            <a th:href="@{/trips/{id}(id=${trip.id()})}">
+                <span class="eyebrow" th:text="${trip.departureDate() == null ? 'DATE NOT SET' : trip.departureDate()}">DATE</span>
+                <h3 th:text="${trip.destination()}">Destination</h3><span th:text="${trip.purpose()}">Purpose</span>
+            </a>
+            <div class="trip-tools">
+                <a th:each="tool : ${travelTools}" th:href="@{/trips/{tripId}/tools/{kind}(tripId=${trip.id()},kind=${tool['kind']})}"
+                   th:text="${tool['name']}">Tool</a>
+            </div>
+        </article></div>
+    </section>
+</main>
+</body>
+</html>

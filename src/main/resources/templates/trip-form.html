@@ -1,0 +1,20 @@
+<!doctype html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>New trip — Bagorithm</title>
+    <link rel="stylesheet" th:href="@{/webjars/bootstrap/5.3.3/css/bootstrap.min.css}"><link rel="stylesheet" th:href="@{/css/app.css}">
+</head>
+<body class="photo-page inner-page"><div th:replace="~{fragments :: nav}"></div>
+<main class="container narrow page-wrap">
+    <a class="back-link" th:href="@{/dashboard}">← Dashboard</a><h1>Plan a new trip</h1>
+    <div th:replace="~{fragments :: messages}"></div>
+    <form class="form-card" th:action="@{/trips}" method="post">
+        <label for="destination">Destination</label><input id="destination" name="destination" maxlength="160" required>
+        <div class="form-row"><div><label for="departureDate">Departure date</label><input id="departureDate" name="departureDate" type="date"></div><div><label for="returnDate">Return date</label><input id="returnDate" name="returnDate" type="date"></div></div>
+        <div class="form-row"><div><label for="weather">Expected weather</label><select id="weather" name="weather"><option>Moderate</option><option>Hot</option><option>Cold</option><option>Rainy</option></select></div>
+            <div><label for="purpose">Trip purpose</label><select id="purpose" name="purpose"><option>Vacation</option><option>Business</option><option>Adventure</option><option>Family trip</option><option>Religious trip</option><option>Educational trip</option></select></div></div>
+        <label for="maxCapacityKg">Luggage capacity (kg)</label><input id="maxCapacityKg" name="maxCapacityKg" type="number" step="0.1" min="0.1" value="15" required>
+        <button class="btn btn-primary mt-3" type="submit">Create trip & recommendations</button>
+    </form>
+</main></body></html>

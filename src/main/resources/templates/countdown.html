@@ -1,0 +1,10 @@
+<!doctype html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"><head>
+    <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Trip countdown — Bagorithm</title>
+    <link rel="stylesheet" th:href="@{/webjars/bootstrap/5.3.3/css/bootstrap.min.css}"><link rel="stylesheet" th:href="@{/css/app.css}">
+</head><body class="photo-page inner-page"><div th:replace="~{fragments :: nav}"></div>
+<main class="container page-wrap"><p class="eyebrow">THE JOURNEY IS GETTING CLOSER</p><h1>Trip countdown</h1>
+    <div class="trip-grid"><a class="trip-card countdown-card" th:each="entry : ${countdowns}" th:href="@{/trips/{id}(id=${entry['trip'].id()})}">
+        <h2 th:text="${entry['trip'].destination()}">Destination</h2><p th:text="${entry['trip'].departureDate() == null ? 'Departure date not set' : entry['trip'].departureDate()}">Date</p><strong th:text="${entry['message']}">Countdown</strong>
+    </a></div><p class="empty-state" th:if="${#lists.isEmpty(countdowns)}">Create a trip to see a countdown.</p>
+</main></body></html>

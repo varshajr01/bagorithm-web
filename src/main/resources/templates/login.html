@@ -1,0 +1,30 @@
+<!doctype html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Sign in — Bagorithm</title>
+    <link rel="stylesheet" th:href="@{/webjars/bootstrap/5.3.3/css/bootstrap.min.css}"><link rel="stylesheet" th:href="@{/css/app.css}">
+</head>
+<body class="photo-page login-page">
+<main class="auth-card">
+    <a class="brand" th:href="@{/welcome}">BAGORITHM<span>TRAVEL SMARTER</span></a>
+    <h1>Welcome back</h1><p class="muted">Sign in to plan your next trip.</p>
+    <div th:replace="~{fragments :: messages}"></div>
+    <p class="error" th:if="${param.error}">Email or password is incorrect.</p>
+    <p class="notice" th:if="${param.logout}">You have signed out.</p>
+    <form th:action="@{/login}" method="post">
+        <label for="username">Email</label><input id="username" name="username" type="email" autocomplete="email" required>
+        <label for="password">Password</label><input id="password" name="password" type="password" autocomplete="current-password" required>
+        <label class="check-line"><input id="show-password" type="checkbox"> Show Password</label>
+        <label class="check-line"><input type="checkbox" name="remember-me"> Remember Me</label>
+        <button class="btn btn-primary w-100" type="submit">LOGIN</button>
+    </form>
+    <p class="auth-foot">New to Bagorithm? <a th:href="@{/register}">Create an account</a></p>
+</main>
+<script>
+document.getElementById('show-password').addEventListener('change', function () {
+    document.getElementById('password').type = this.checked ? 'text' : 'password';
+});
+</script>
+</body>
+</html>

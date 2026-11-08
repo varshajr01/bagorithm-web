@@ -1,0 +1,56 @@
+<!doctype html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+    <title th:text="${trip.destination()} + ' — Bagorithm'">Trip — Bagorithm</title>
+    <link rel="stylesheet" th:href="@{/webjars/bootstrap/5.3.3/css/bootstrap.min.css}"><link rel="stylesheet" th:href="@{/css/app.css}">
+</head>
+<body class="photo-page inner-page"><div th:replace="~{fragments :: nav}"></div>
+<main class="container page-wrap">
+    <a class="back-link" th:href="@{/previous}">← My trips</a>
+    <p class="eyebrow" th:text="${trip.purpose() + ' · ' + trip.weather()}">TRIP DETAILS</p><h1 th:text="${trip.destination()}">Destination</h1>
+    <p class="muted"><span th:text="${trip.departureDate() == null ? 'Departure date not set' : trip.departureDate()}"></span>
+        <span th:if="${trip.returnDate() != null}" th:text="${' — ' + trip.returnDate()}"></span></p>
+    <div class="stats-grid">
+        <div class="stat-card"><span>Selected luggage</span><strong th:text="${#numbers.formatDecimal(totalKg, 1, 2)} + ' kg'">0 kg</strong></div>
+        <div class="stat-card"><span>Capacity</span><strong th:text="${trip.maxCapacityKg()} + ' kg'">0 kg</strong></div>
+        <div class="stat-card"><span>Remaining</span><strong th:text="${#numbers.formatDecimal(remainingKg, 1, 2)} + ' kg'">0 kg</strong></div>
+        <div class="stat-card"><span>Packed</span><strong th:text="${packedCount + ' / ' + #lists.size(items)}">0 / 0</strong></div>
+    </div>
+    <p class="error" th:if="${!withinCapacity}">Luggage capacity exceeded. Review your packing list.</p>
+    <div class="tool-links">
+        <a th:href="@{/trips/{id}/tools/itinerary(id=${trip.id()})}">Itinerary</a><a th:href="@{/trips/{id}/tools/shopping(id=${trip.id()})}">Shopping</a>
+        <a th:href="@{/trips/{id}/tools/souvenirs(id=${trip.id()})}">Souvenirs</a><a th:href="@{/trips/{id}/tools/checklist(id=${trip.id()})}">Home checklist</a>
+        <a th:href="@{/trips/{id}/tools/memories(id=${trip.id()})}">Travel journal</a>
+    </div>
+    <section id="packing" class="section-block">
+        <div class="section-heading"><div><p class="eyebrow">PERSONALIZED FOR THIS JOURNEY</p><h2>Packing recommendations & checklist</h2></div></div>
+        <details class="recommendations">
+            <summary>View original recommendations</summary>
+            <ul><li th:each="suggestion : ${recommendations}" th:text="${suggestion.name() + ' · ' + suggestion.quantity() + ' × ' + suggestion.unitWeightGrams() + ' g'}">Suggested item</li></ul>
+        </details>
+        <div th:replace="~{fragments :: messages}"></div>
+        <div class="table-responsive"><table class="table align-middle data-table"><thead><tr><th>Item</th><th>Category</th><th>In luggage</th><th>Packed</th><th>Quantity</th><th>Unit weight (g)</th><th>Item weight (g)</th><th>Actions</th></tr></thead>
+            <tbody><tr th:each="item : ${items}">
+                <td th:text="${item.name()}">Item</td><td th:text="${item.category()}">Category</td>
+                <td><form th:action="@{/trips/{tripId}/packing/{itemId}/selection(tripId=${trip.id()},itemId=${item.id()})}" method="post">
+                    <button class="btn btn-sm" th:classappend="${item.selected() ? 'btn-success' : 'btn-outline-secondary'}"
+                            th:text="${item.selected() ? 'Included' : 'Excluded'}" type="submit">Included</button>
+                </form></td><td th:text="${item.packed() ? 'Yes' : 'No'}">No</td>
+                <td colspan="3"><form class="inline-form" th:action="@{/trips/{tripId}/packing/{itemId}/edit(tripId=${trip.id()},itemId=${item.id()})}" method="post">
+                    <input aria-label="Quantity" name="quantity" type="number" min="1" th:value="${item.quantity()}" required>
+                    <input aria-label="Weight in grams" name="unitWeightGrams" type="number" step="0.1" min="0.1" th:value="${item.unitWeightGrams()}" required>
+                    <span th:text="${#numbers.formatDecimal(item.getTotalWeightGrams(), 1, 1)}">0</span><button class="btn btn-sm btn-outline-primary">Save</button>
+                </form></td><td class="action-cell">
+                    <form th:action="@{/trips/{tripId}/packing/{itemId}/toggle(tripId=${trip.id()},itemId=${item.id()})}" method="post"><button class="btn btn-sm btn-outline-primary" th:text="${item.packed() ? 'Unpack' : 'Pack'}">Pack</button></form>
+                    <form th:action="@{/trips/{tripId}/packing/{itemId}/delete(tripId=${trip.id()},itemId=${item.id()})}" method="post"><button class="btn btn-sm btn-outline-danger">Remove</button></form>
+                </td>
+            </tr></tbody>
+        </table></div>
+        <form class="form-card compact-form" th:action="@{/trips/{id}/packing(id=${trip.id()})}" method="post">
+            <h3>Add packing item</h3><div class="form-row"><div><label>Name</label><input name="name" required></div><div><label>Category</label><input name="category" required></div></div>
+            <div class="form-row"><div><label>Quantity</label><input name="quantity" type="number" min="1" value="1" required></div><div><label>Unit weight (grams)</label><input name="unitWeightGrams" type="number" step="0.1" min="0.1" required></div></div>
+            <button class="btn btn-primary">Add item</button>
+        </form>
+    </section>
+</main></body></html>

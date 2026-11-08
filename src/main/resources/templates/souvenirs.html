@@ -1,0 +1,31 @@
+<!doctype html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"><head>
+    <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Souvenir collection — Bagorithm</title>
+    <link rel="stylesheet" th:href="@{/webjars/bootstrap/5.3.3/css/bootstrap.min.css}"><link rel="stylesheet" th:href="@{/css/app.css}">
+</head><body class="photo-page inner-page"><div th:replace="~{fragments :: nav}"></div>
+<main class="container page-wrap">
+    <p class="eyebrow">MEMENTOS FROM YOUR JOURNEYS</p><h1>Souvenir collection</h1>
+    <form class="filter-form" th:action="@{/souvenirs}" method="get">
+        <label for="tripId">Filter by trip</label>
+        <select id="tripId" name="tripId">
+            <option value="">All trips</option>
+            <option th:each="trip : ${trips}" th:value="${trip.id()}" th:selected="${selectedTripId == trip.id()}"
+                    th:text="${trip.destination()}">Trip</option>
+        </select>
+        <button class="btn btn-primary" type="submit">Filter</button>
+    </form>
+    <p class="empty-state" th:if="${#lists.isEmpty(souvenirs)}">No souvenirs saved yet. Add one from a trip.</p>
+    <div class="trip-grid">
+        <article class="souvenir-card" th:each="item : ${souvenirs}">
+            <img class="souvenir-image" th:if="${item['photo_path'] != null}"
+                 th:src="@{/uploads/{file}(file=${item['photo_path']})}" alt="Souvenir photo">
+            <div class="souvenir-content">
+                <p class="eyebrow" th:text="${item['destination']}">Trip</p>
+                <h2 th:text="${item['name']}">Souvenir</h2>
+                <p th:text="${item['description']}">Description</p>
+                <p class="muted" th:text="${item['collected_place'] + ' · ' + item['collection_date']}">Place and date</p>
+                <a class="text-link" th:href="@{/trips/{id}/tools/souvenirs(id=${item['trip_id']})}">Manage souvenirs for this trip →</a>
+            </div>
+        </article>
+    </div>
+</main></body></html>

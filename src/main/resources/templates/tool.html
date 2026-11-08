@@ -1,0 +1,142 @@
+<!doctype html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"><head>
+    <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+    <title th:text="${kind + ' — ' + trip.destination()}">Travel tool — Bagorithm</title>
+    <link rel="stylesheet" th:href="@{/webjars/bootstrap/5.3.3/css/bootstrap.min.css}"><link rel="stylesheet" th:href="@{/css/app.css}">
+</head><body class="photo-page inner-page"><div th:replace="~{fragments :: nav}"></div>
+<main class="container page-wrap">
+    <a class="back-link" th:href="@{/trips/{id}(id=${trip.id()})}">← <span th:text="${trip.destination()}">Trip</span></a>
+    <p class="eyebrow">TRAVEL TOOLS · <span th:text="${trip.destination()}">TRIP</span></p>
+    <h1 th:switch="${kind}">
+        <span th:case="'itinerary'">Itinerary planner</span><span th:case="'shopping'">Pre-travel shopping</span>
+        <span th:case="'souvenirs'">Souvenir collection</span><span th:case="'checklist'">Home before travel checklist</span>
+        <span th:case="'memories'">Travel memory journal</span>
+    </h1>
+    <div th:replace="~{fragments :: messages}"></div>
+    <div class="stats-grid" th:if="${kind == 'checklist' || kind == 'itinerary' || kind == 'shopping'}">
+        <div class="stat-card"><span>Completed</span><strong th:text="${completedCount}">0</strong></div>
+        <div class="stat-card"><span>Remaining</span><strong th:text="${pendingCount}">0</strong></div>
+        <div class="stat-card" th:if="${kind == 'checklist'}"><span>Progress</span><strong th:text="${completionPercent} + '%'">0%</strong></div>
+        <div class="stat-card" th:if="${kind == 'shopping'}"><span>Estimated total</span><strong th:text="'₹' + ${#numbers.formatDecimal(shoppingTotal, 1, 2)}">₹0.00</strong></div>
+    </div>
+    <section class="section-block">
+        <h2 th:switch="${kind}">
+            <span th:case="'itinerary'">Activities in date order</span><span th:case="'shopping'">Shopping items</span>
+            <span th:case="'souvenirs'">Collected souvenirs</span><span th:case="'checklist'">Trip checklist</span>
+            <span th:case="'memories'">Travel memories</span>
+        </h2>
+        <p class="empty-state" th:if="${#lists.isEmpty(items)}">Nothing added here yet.</p>
+        <div class="status-columns" th:if="${kind == 'itinerary' || kind == 'shopping'}">
+            <section class="status-list">
+                <h3 th:text="${kind == 'shopping' ? 'Purchased' : 'Completed'}">Completed</h3>
+                <ul><li th:each="item : ${completedItems}" th:text="${item['name']}">Item</li></ul>
+                <p class="muted" th:if="${#lists.isEmpty(completedItems)}">None yet.</p>
+            </section>
+            <section class="status-list">
+                <h3 th:text="${kind == 'shopping' ? 'Not purchased' : 'Pending'}">Pending</h3>
+                <ul><li th:each="item : ${pendingItems}" th:text="${item['name']}">Item</li></ul>
+                <p class="muted" th:if="${#lists.isEmpty(pendingItems)}">None remaining.</p>
+            </section>
+        </div>
+        <div class="status-columns" th:if="${kind == 'checklist'}">
+            <section class="status-list">
+                <h3>Completed tasks</h3>
+                <ul><li th:each="item : ${completedItems}" th:text="${item['name']}">Task</li></ul>
+                <p class="muted" th:if="${#lists.isEmpty(completedItems)}">None yet.</p>
+            </section>
+            <section class="status-list">
+                <h3>Pending tasks</h3>
+                <ul><li th:each="item : ${pendingItems}" th:text="${item['name']}">Task</li></ul>
+                <p class="muted" th:if="${#lists.isEmpty(pendingItems)}">All done.</p>
+            </section>
+        </div>
+        <div class="item-grid" th:each="item : ${items}">
+            <article class="item-card">
+                <img class="memory-image" th:if="${kind == 'souvenirs' && item['photo_path'] != null}"
+                     th:src="@{/uploads/{file}(file=${item['photo_path']})}" alt="Travel photo">
+                <div class="memory-photos" th:if="${kind == 'memories' && item['photo_paths'] != null}">
+                    <img th:each="file : ${#strings.arraySplit(item['photo_paths'], '|')}" th:src="@{/uploads/{file}(file=${file})}" alt="Travel memory photo">
+                </div>
+                <div class="item-content">
+                    <div class="section-heading"><h3 th:text="${item['name']}">Item</h3>
+                        <span class="status-pill" th:if="${item['completed'] != null && kind != 'shopping'}" th:text="${item['completed'] ? 'Completed' : 'Pending'}">Status</span>
+                        <span class="status-pill" th:if="${kind == 'shopping'}" th:text="${item['completed'] ? 'Purchased' : 'Not purchased'}">Status</span>
+                    </div>
+                    <p th:if="${kind == 'itinerary'}" th:text="${item['planned_date'] + ' · ' + item['planned_time'] + ' · ' + item['location']}">Date and location</p>
+                    <p th:if="${kind == 'itinerary'}" th:text="${'Priority: ' + item['priority']}">Priority</p>
+                    <p th:if="${kind == 'shopping'}" th:text="${item['category'] + ' · ' + item['quantity'] + ' × ₹' + item['estimated_price'] + ' = ₹' + item['total']}">Cost</p>
+                    <p th:if="${kind == 'souvenirs'}" th:text="${item['collected_place'] + ' · ' + item['collection_date']}">Place and date</p>
+                    <p th:if="${kind == 'memories'}" th:text="${item['favourite_places'] + ' · Rating: ' + item['rating'] + '/5'}">Memory details</p>
+                    <p th:if="${item['description'] != null}" th:text="${item['description']}">Description</p>
+                    <div class="item-actions">
+                        <form th:if="${kind == 'itinerary' || kind == 'shopping' || kind == 'checklist'}"
+                              th:action="@{/trips/{tripId}/tools/{kind}/{itemId}/toggle(tripId=${trip.id()},kind=${kind},itemId=${item['id']})}" method="post">
+                            <button class="btn btn-sm btn-outline-primary" type="submit"
+                                    th:text="${item['completed'] ? 'Mark pending' : (kind == 'shopping' ? 'Mark purchased' : 'Mark completed')}">Update status</button>
+                        </form>
+                        <details><summary>Edit</summary>
+                            <form class="edit-form" enctype="multipart/form-data"
+                                  th:action="@{/trips/{tripId}/tools/{kind}/{itemId}/edit(tripId=${trip.id()},kind=${kind},itemId=${item['id']})}" method="post">
+                                <label th:if="${kind != 'shopping'}">Name<input name="name" th:value="${item['name']}" required></label>
+                                <label th:if="${kind == 'shopping'}">Name<input name="name" th:value="${item['name']}" required></label>
+                                <label th:if="${kind == 'itinerary' || kind == 'souvenirs' || kind == 'memories'}">Description
+                                    <textarea name="description" th:text="${item['description']}"></textarea></label>
+                                <label th:if="${kind == 'itinerary'}">Date<input name="plannedDate" type="date" th:value="${item['planned_date']}" required></label>
+                                <label th:if="${kind == 'itinerary'}">Time<input name="plannedTime" type="time" th:value="${item['planned_time']}" required></label>
+                                <label th:if="${kind == 'itinerary'}">Location<input name="location" th:value="${item['location']}"></label>
+                                <label th:if="${kind == 'itinerary'}">Priority<select name="priority"><option value="High" th:selected="${item['priority'] == 'High'}">High</option><option value="Medium" th:selected="${item['priority'] == 'Medium'}">Medium</option><option value="Low" th:selected="${item['priority'] == 'Low'}">Low</option></select></label>
+                                <label th:if="${kind == 'shopping'}">Category<input name="category" th:value="${item['category']}"></label>
+                                <label th:if="${kind == 'shopping'}">Price<input name="price" type="number" step="0.01" min="0" th:value="${item['estimated_price']}" required></label>
+                                <label th:if="${kind == 'shopping'}">Quantity<input name="quantity" type="number" min="1" th:value="${item['quantity']}" required></label>
+                                <label th:if="${kind == 'souvenirs'}">Collected place<input name="place" th:value="${item['collected_place']}"></label>
+                                <label th:if="${kind == 'souvenirs'}">Collection date<input name="collectionDate" type="date" th:value="${item['collection_date']}" required></label>
+                                <label th:if="${kind == 'souvenirs'}">Replace photo<input name="photo" type="file" accept="image/jpeg,image/png,image/gif"></label>
+                                <label th:if="${kind == 'memories'}">Favourite places<textarea name="favouritePlaces" th:text="${item['favourite_places']}"></textarea></label>
+                                <label th:if="${kind == 'memories'}">Rating<select name="rating"><option value="5" th:selected="${item['rating'] == 5}">5</option><option value="4" th:selected="${item['rating'] == 4}">4</option><option value="3" th:selected="${item['rating'] == 3}">3</option><option value="2" th:selected="${item['rating'] == 2}">2</option><option value="1" th:selected="${item['rating'] == 1}">1</option></select></label>
+                                <button class="btn btn-sm btn-primary" type="submit">Save changes</button>
+                            </form>
+                        </details>
+                        <form th:if="${kind != 'checklist' || !item['is_default']}"
+                              th:action="@{/trips/{tripId}/tools/{kind}/{itemId}/delete(tripId=${trip.id()},kind=${kind},itemId=${item['id']})}" method="post">
+                            <button class="btn btn-sm btn-outline-danger" type="submit">Delete</button>
+                        </form>
+                    </div>
+                </div>
+            </article>
+        </div>
+    </section>
+    <section class="section-block">
+        <h2 th:switch="${kind}">
+            <span th:case="'itinerary'">Add activity</span><span th:case="'shopping'">Add shopping item</span>
+            <span th:case="'souvenirs'">Add souvenir</span><span th:case="'checklist'">Add custom task</span>
+            <span th:case="'memories'">Record a memory</span>
+        </h2>
+        <form class="form-card compact-form" enctype="multipart/form-data"
+              th:action="@{/trips/{id}/tools/{kind}/add(id=${trip.id()},kind=${kind})}" method="post">
+            <label>Name / title<input name="name" required></label>
+            <label th:if="${kind == 'itinerary' || kind == 'souvenirs' || kind == 'memories'}">Description<textarea name="description"></textarea></label>
+            <div class="form-row" th:if="${kind == 'itinerary'}">
+                <div><label>Planned date<input name="plannedDate" type="date" required></label></div>
+                <div><label>Planned time<input name="plannedTime" type="time" required></label></div>
+            </div>
+            <div class="form-row" th:if="${kind == 'itinerary'}">
+                <div><label>Location<input name="location"></label></div>
+                <div><label>Priority<select name="priority"><option>High</option><option selected>Medium</option><option>Low</option></select></label></div>
+            </div>
+            <div class="form-row" th:if="${kind == 'shopping'}">
+                <div><label>Category<input name="category"></label></div><div><label>Estimated price (₹)<input name="price" type="number" min="0" step="0.01" required></label></div>
+                <div><label>Quantity<input name="quantity" type="number" min="1" value="1" required></label></div>
+            </div>
+            <div class="form-row" th:if="${kind == 'souvenirs'}">
+                <div><label>Place collected<input name="place"></label></div><div><label>Collection date<input name="collectionDate" type="date" required></label></div>
+            </div>
+            <div th:if="${kind == 'souvenirs'}"><label>Photo (JPG, PNG or GIF; up to 5 MB)<input name="photo" type="file" accept="image/jpeg,image/png,image/gif"></label></div>
+            <div th:if="${kind == 'memories'}">
+                <label>Favourite places<textarea name="favouritePlaces"></textarea></label>
+                <label>Rating<select name="rating"><option>5</option><option>4</option><option>3</option><option>2</option><option>1</option></select></label>
+                <label>Photos<input name="photos" type="file" accept="image/jpeg,image/png,image/gif" multiple></label>
+            </div>
+            <button class="btn btn-primary" type="submit" th:text="${kind == 'checklist' ? 'Add custom task' : 'Add'}">Add</button>
+        </form>
+    </section>
+</main></body></html>

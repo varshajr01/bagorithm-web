@@ -1,0 +1,12 @@
+<!doctype html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"><head>
+    <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>My trips — Bagorithm</title>
+    <link rel="stylesheet" th:href="@{/webjars/bootstrap/5.3.3/css/bootstrap.min.css}"><link rel="stylesheet" th:href="@{/css/app.css}">
+</head><body class="photo-page inner-page"><div th:replace="~{fragments :: nav}"></div>
+<main class="container page-wrap"><p class="eyebrow">YOUR JOURNEYS</p><h1>My trips</h1>
+    <div class="trip-grid"><a class="trip-card" th:each="trip : ${trips}" th:href="@{/trips/{id}(id=${trip.id()})}">
+        <span class="eyebrow" th:text="${trip.departureDate() == null ? 'DEPARTURE DATE NOT SET' : trip.departureDate()}">DATE</span><h2 th:text="${trip.destination()}">Destination</h2>
+        <p th:text="${trip.purpose() + ' · ' + trip.weather()}">Details</p><span class="text-link">Open trip →</span>
+    </a></div>
+    <p class="empty-state" th:if="${#lists.isEmpty(trips)}">Your trips will appear here after you create one.</p>
+</main></body></html>

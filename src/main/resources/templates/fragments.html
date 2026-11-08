@@ -1,0 +1,19 @@
+<!doctype html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<body>
+<header th:fragment="nav" class="site-nav">
+    <a class="brand" th:href="@{/dashboard}">BAGORITHM<span>TRAVEL SMARTER</span></a>
+    <nav>
+        <a th:href="@{/dashboard}">Dashboard</a>
+        <a th:href="@{/previous}">My trips</a>
+        <a th:href="@{/souvenirs}">Souvenirs</a>
+        <a th:href="@{/tools/countdown}">Countdown</a>
+        <form th:action="@{/logout}" method="post" class="logout-form"><button class="link-button" type="submit">Log out</button></form>
+    </nav>
+</header>
+<div th:fragment="messages" class="messages">
+    <p class="notice" th:if="${notice}" th:text="${notice}"></p>
+    <p class="error" th:if="${error}" th:text="${error}"></p>
+</div>
+</body>
+</html>
