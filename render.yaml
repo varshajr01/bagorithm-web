@@ -2,15 +2,11 @@ services:
   - type: web
     name: bagorithm-web
     runtime: docker
-    plan: starter
+    plan: free
     region: oregon
     dockerfilePath: ./Dockerfile
     dockerContext: .
     healthCheckPath: /welcome
-    disk:
-      name: bagorithm-uploads
-      mountPath: /var/data
-      sizeGB: 1
     envVars:
       - key: SPRING_PROFILES_ACTIVE
         value: prod
@@ -21,12 +17,12 @@ services:
       - key: REMEMBER_ME_KEY
         generateValue: true
       - key: UPLOAD_DIR
-        value: /var/data/uploads
+        value: ./uploads
 
 databases:
   - name: bagorithm-db
     databaseName: bagorithm
     user: bagorithm
-    plan: basic-256mb
+    plan: free
     region: oregon
     postgresMajorVersion: "16"
